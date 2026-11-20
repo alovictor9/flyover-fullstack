@@ -1,0 +1,34 @@
+# Render Blueprint for the Flyover backend.
+# Render reads this file when you choose New > Blueprint and pick your repository.
+services:
+  - type: web
+    name: flyover-api
+    runtime: node
+    rootDir: backend
+    # "free" sleeps after 15 minutes idle. Change to "starter" (about $7/month) so it never sleeps.
+    plan: free
+    buildCommand: npm install --include=dev && npx prisma generate && npm run build
+    # The build writes server.js to dist/src/, so this path differs from the "start" script in package.json.
+    startCommand: node dist/src/server.js
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NODE_ENV
+        value: production
+      # Render makes a long random value for these two.
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: IP_HASH_SALT
+        generateValue: true
+      # You fill these in on the Render dashboard (see DEPLOY.md). They are not stored in this file.
+      - key: DATABASE_URL
+        sync: false
+      - key: INTEGRATION_ENCRYPTION_KEY
+        sync: false
+      - key: API_PUBLIC_URL
+        sync: false
+      - key: APP_BASE_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
